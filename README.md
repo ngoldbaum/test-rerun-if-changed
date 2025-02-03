@@ -8,7 +8,7 @@ $ ln -s /bin/sh .nox/test/bin/python
 $ cargo build
 $ rm -r .nox
 $ mkdir -p .nox/test/bin
-$ ln -s /bin/sh .nox/test/bin/python
+$ ln -s /bin/cp .nox/test/bin/python
 $ cargo build
 ```
 
@@ -27,14 +27,17 @@ $ rm -r .nox
 
 $ mkdir -p .nox/test/bin
 
-$ ln -s /bin/sh .nox/test/bin/python
+$ ln -s /bin/cp .nox/test/bin/python
 
 $ cargo build
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
 ```
 
 Note how the build script was *not* retriggered for the second `cargo build`
-invocation.
+invocation, even though the symlinks are to completely different files that happen to have the same `mtime`, at least on my machine:
 
-I would think that deleting and recreating a file (producing a file with the
-same content but a different `mtime`) would trigger a rebuild.
+```
+$ ls -lh /bin/cp /bin/sh
+-rwxr-xr-x  1 root  wheel   134K Dec  7 01:11 /bin/cp
+-rwxr-xr-x  1 root  wheel    99K Dec  7 01:11 /bin/sh
+```
